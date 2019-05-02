@@ -891,6 +891,12 @@ impl<'ascent, 'grammar, W: Write> CodeGenerator<'ascent, 'grammar, W, TableDrive
     fn emit_reduce_action(&mut self, production: &Production) -> io::Result<()> {
         rust!(self.out, "// {:?}", production);
 
+        #[cfg(log)]
+        {
+            let production = format!("{:?}", production);
+            rust!(self.out, "debug!(\"Applying reduction {{}} \", {:?});", production);
+        }
+
         // Pop each of the symbols and their associated states.
         for (index, symbol) in production.symbols.iter().enumerate().rev() {
             let name = self.variant_name_for_symbol(symbol);
